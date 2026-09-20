@@ -23,11 +23,14 @@ export default async function handler(req, res) {
       });
     }
 
-    const { data: attendance, error } = await supabase
+    const {
+      data: attendance,
+      error,
+    } = await supabase
       .from("attendace")
       .insert([
         {
-          uid,
+          uid: uid,
           student_id: data,
         },
       ])
@@ -35,7 +38,7 @@ export default async function handler(req, res) {
       .single();
 
     if (error) {
-      console.error(error);
+      console.error("Supabase error:", error);
 
       return res.status(500).json({
         success: false,
@@ -45,10 +48,10 @@ export default async function handler(req, res) {
 
     return res.status(200).json({
       success: true,
-      attendace,
+      attendance: attendance,
     });
   } catch (error) {
-    console.error(error);
+    console.error("Server error:", error);
 
     return res.status(500).json({
       success: false,

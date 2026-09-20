@@ -21,9 +21,13 @@ function Scanner() {
 
           for (const record of message.records) {
             if (record.recordType === "text") {
-              const decoder = new TextDecoder(record.encoding);
+              const decoder = new TextDecoder(
+                record.encoding
+              );
 
-              nfcText = decoder.decode(record.data);
+              nfcText = decoder.decode(
+                record.data
+              );
             }
           }
 
@@ -40,7 +44,8 @@ function Scanner() {
                 method: "POST",
 
                 headers: {
-                  "Content-Type": "application/json",
+                  "Content-Type":
+                    "application/json",
                 },
 
                 body: JSON.stringify({
@@ -50,7 +55,6 @@ function Scanner() {
               }
             );
 
-            // Read the response as text first
             const responseText =
               await response.text();
 
@@ -59,11 +63,12 @@ function Scanner() {
               responseText
             );
 
-            // Then convert it to JSON
             let result;
 
             try {
-              result = JSON.parse(responseText);
+              result = JSON.parse(
+                responseText
+              );
             } catch (error) {
               throw new Error(
                 "Server returned invalid JSON: " +
@@ -73,8 +78,10 @@ function Scanner() {
 
             if (!response.ok) {
               throw new Error(
-                result.message ||
-                  "Failed to send attendance"
+                `Server error ${response.status}: ${
+                  result.message ||
+                  "Unknown error"
+                }`
               );
             }
 
@@ -87,7 +94,10 @@ function Scanner() {
               "Attendance sent successfully!"
             );
           } catch (error) {
-            console.error(error);
+            console.error(
+              "Attendance error:",
+              error
+            );
 
             setStatus(
               "Failed to send attendance"
@@ -98,7 +108,10 @@ function Scanner() {
         }
       );
     } catch (error) {
-      console.error(error);
+      console.error(
+        "NFC error:",
+        error
+      );
 
       setStatus("NFC Error");
 
@@ -141,7 +154,8 @@ function Scanner() {
           fontWeight: "bold",
         }}
       >
-        {data || "Nothing scanned yet"}
+        {data ||
+          "Nothing scanned yet"}
       </p>
     </div>
   );
