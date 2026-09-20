@@ -1,50 +1,169 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+body {
+  margin: 0;
+  font-family: 'Inter', Arial, sans-serif;
+  background: #f2f2f2;
+  color: #222;
+}
+
+.app {
+  max-width: 700px;
+  margin: 80px auto;
+  padding: 0 20px;
+  text-align: center;
+  animation: fadeIn 0.6s ease;
+}
+
+.app h1 {
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.app > p {
+  color: #666;
+  font-size: 14px;
+}
+
+
+/* Attendance Card */
+
 .card {
   position: relative;
+
+  background: white;
+  padding: 40px;
+  margin-top: 30px;
+
+  border-radius: 12px;
+
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+
+  animation: cardIn 0.5s ease;
+
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
 }
+
+.card:hover {
+  transform: translateY(-3px);
+
+  box-shadow:
+    0 8px 22px rgba(0, 0, 0, 0.12);
+}
+
+
+/* Student Photo */
+
+.student-photo {
+  width: 150px;
+  height: 150px;
+
+  object-fit: cover;
+
+  border-radius: 50%;
+
+  display: block;
+  margin: 0 auto 20px;
+
+  animation: photoIn 0.5s ease;
+}
+
+
+/* Student Name */
+
+.card h2 {
+  font-size: 26px;
+  font-weight: 600;
+
+  margin: 10px 0;
+}
+
+
+/* Label */
+
+.label {
+  font-size: 16px;
+  color: #777;
+  margin-bottom: 5px;
+}
+
+
+/* Student ID */
+
+.student-id {
+  font-size: 40px;
+  font-weight: 700;
+
+  margin-top: 5px;
+  margin-bottom: 20px;
+}
+
+
+/* Attendance Status */
+
+.attendance-status {
+  display: inline-block;
+
+  margin-top: 15px;
+  padding: 8px 14px;
+
+  border-radius: 20px;
+
+  background: #f1f1f1;
+
+  font-size: 14px;
+  font-weight: 600;
+}
+
+
+/* Delete Button */
 
 .delete-button {
   position: absolute;
+
   top: 15px;
   right: 15px;
 
-  width: 42px;
-  height: 42px;
+  width: 38px;
+  height: 38px;
 
   border: none;
   border-radius: 50%;
 
   background: #f1f1f1;
 
-  font-size: 18px;
-
   cursor: pointer;
 
-  transition: 0.2s;
+  font-size: 17px;
+
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease;
 }
 
 .delete-button:hover {
-  background: #ffdddd;
   transform: scale(1.08);
-}
-
-.delete-button:disabled {
-  cursor: not-allowed;
-  opacity: 0.5;
+  background: #ffe5e5;
 }
 
 
-/* DELETE CONFIRMATION */
+/* Delete Confirmation */
 
 .delete-confirm {
   margin-top: 25px;
 
   padding: 20px;
 
-  border-radius: 12px;
+  border-radius: 10px;
 
-  background: #fff3f3;
+  background: #fafafa;
 
-  border: 1px solid #ffcaca;
+  border: 1px solid #e5e5e5;
+
+  animation: fadeIn 0.25s ease;
 }
 
 .delete-confirm h3 {
@@ -53,57 +172,87 @@
 }
 
 .delete-confirm p {
-  margin-bottom: 18px;
+  color: #666;
 }
+
+
+/* Confirmation Buttons */
 
 .confirm-buttons {
   display: flex;
-  gap: 10px;
   justify-content: center;
+  gap: 10px;
+
+  margin-top: 15px;
 }
 
+.cancel-button,
+.confirm-delete-button {
+  border: none;
 
-/* CANCEL */
+  padding: 9px 18px;
+
+  border-radius: 7px;
+
+  font-family: inherit;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    transform 0.2s ease,
+    opacity 0.2s ease;
+}
 
 .cancel-button {
-  padding: 10px 20px;
-
-  border: none;
-  border-radius: 8px;
-
-  background: #e5e5e5;
-
-  cursor: pointer;
-
-  font-weight: bold;
+  background: #e8e8e8;
+  color: #333;
 }
-
-.cancel-button:hover {
-  background: #d5d5d5;
-}
-
-
-/* DELETE */
 
 .confirm-delete-button {
-  padding: 10px 20px;
-
-  border: none;
-  border-radius: 8px;
-
-  background: #d93025;
+  background: #333;
   color: white;
-
-  cursor: pointer;
-
-  font-weight: bold;
 }
 
+.cancel-button:hover,
 .confirm-delete-button:hover {
-  background: #b9231a;
+  transform: translateY(-1px);
+  opacity: 0.85;
 }
 
-.confirm-delete-button:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
+
+/* Animations */
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes cardIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes photoIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
