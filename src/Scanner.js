@@ -14,111 +14,72 @@ function Scanner() {
 
       setStatus("Waiting for NFC tag...");
 
-      ndef.addEventListener(
-        "reading",
-        async ({ serialNumber, message }) => {
-          let nfcText = "";
+      ndef.addEventListener("reading", async ({ serialNumber, message }) => {
+        let nfcText = "";
 
-          for (const record of message.records) {
-            if (record.recordType === "text") {
-              const decoder = new TextDecoder(
-                record.encoding
-              );
+        for (const record of message.records) {
+          if (record.recordType === "text") {
+            const decoder = new TextDecoder(record.encoding);
 
-              nfcText = decoder.decode(
-                record.data
-              );
-            }
-          }
-
-          console.log("UID:", serialNumber);
-          console.log("Data:", nfcText);
-
-          setData(nfcText);
-          setStatus("NFC detected!");
-
-          try {
-            const response = await fetch(
-              "/api/attendace",
-              {
-                method: "POST",
-
-                headers: {
-                  "Content-Type":
-                    "application/json",
-                },
-
-                body: JSON.stringify({
-                  uid: serialNumber,
-                  data: nfcText,
-                }),
-              }
-            );
-
-            const responseText =
-              await response.text();
-
-            console.log(
-              "Vercel response:",
-              responseText
-            );
-
-            let result;
-
-            try {
-              result = JSON.parse(
-                responseText
-              );
-            } catch (error) {
-              throw new Error(
-                "Server returned invalid JSON: " +
-                  responseText
-              );
-            }
-
-            if (!response.ok) {
-              throw new Error(
-                `Server error ${response.status}: ${
-                  result.message ||
-                  "Unknown error"
-                }`
-              );
-            }
-
-            console.log(
-              "Attendance saved:",
-              result
-            );
-
-            setStatus(
-              "Attendance sent successfully!"
-            );
-          } catch (error) {
-            console.error(
-              "Attendance error:",
-              error
-            );
-
-            setStatus(
-              "Failed to send attendance"
-            );
-
-            alert(error.message);
+            nfcText = decoder.decode(record.data);
           }
         }
-      );
+
+        console.log("UID:", serialNumber);
+        console.log("Data:", nfcText);
+
+        setData(nfcText);
+        setStatus("NFC detected!");
+
+        try {
+          const response = await fetch("/api/attendace", {
+            method: "POST",
+
+            headers: {
+              "Content-Type": "application/json",
+            },
+
+            body: JSON.stringify({
+              uid: serialNumber,
+            }),
+          });
+          const responseText = await response.text();
+
+          console.log("Vercel response:", responseText);
+
+          let result;
+
+          try {
+            result = JSON.parse(responseText);
+          } catch (error) {
+            throw new Error("Server returned invalid JSON: " + responseText);
+          }
+
+          if (!response.ok) {
+            throw new Error(
+              `Server error ${response.status}: ${
+                result.message || "Unknown error"
+              }`,
+            );
+          }
+
+          console.log("Attendance saved:", result);
+
+          setStatus("Attendance sent successfully!");
+        } catch (error) {
+          console.error("Attendance error:", error);
+
+          setStatus("Failed to send attendance");
+
+          alert(error.message);
+        }
+      });
     } catch (error) {
-      console.error(
-        "NFC error:",
-        error
-      );
+      console.error("NFC error:", error);
 
       setStatus("NFC Error");
 
-      alert(
-        "NFC error: " +
-          error.message
-      );
+      alert("NFC error: " + error.message);
     }
   };
 
@@ -154,8 +115,7 @@ function Scanner() {
           fontWeight: "bold",
         }}
       >
-        {data ||
-          "Nothing scanned yet"}
+        {data || "Nothing scanned yet"}
       </p>
     </div>
   );

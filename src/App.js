@@ -9,13 +9,38 @@ import "./App.css";
 
 function App() {
   const [nfcData, setNfcData] = useState(null);
-
+  const [student, setStudent] = useState(null);
   const [connection, setConnection] =
     useState("Connecting...");
 
+  const loadStudent = async (studentId) => {
+    const {
+      data,
+      error,
+    } = await supabase
+      .from("students")
+      .select("*")
+      .eq("student_id", studentId)
+      .single();
+
+    if (error) {
+      console.error(
+        "Student lookup error:",
+        error
+      );
+
+      return;
+    }
+
+    setStudent(data);
+  };
+
   useEffect(() => {
     const loadLatestAttendance = async () => {
-      const { data, error } = await supabase
+      const {
+        data,
+        error,
+      } = await supabase
         .from("attendace")
         .select("*")
         .order("scanned_at", {
@@ -34,6 +59,10 @@ function App() {
 
       if (data) {
         setNfcData(data);
+
+        await loadStudent(
+          data.student_id
+        );
       }
 
       setConnection("Connected");
@@ -43,7 +72,6 @@ function App() {
 
     const channel = supabase
       .channel("attendace-changes")
-
       .on(
         "postgres_changes",
         {
@@ -51,17 +79,19 @@ function App() {
           schema: "public",
           table: "attendace",
         },
-
-        (payload) => {
+        async (payload) => {
           console.log(
             "New attendance:",
             payload.new
           );
 
           setNfcData(payload.new);
+
+          await loadStudent(
+            payload.new.student_id
+          );
         }
       )
-
       .subscribe((status) => {
         console.log(
           "Realtime status:",
@@ -97,17 +127,30 @@ function App() {
 
       <div className="card">
 
-        <h2>Latest Attendance</h2>
-
-        {nfcData ? (
+        {student ? (
           <>
+            {student.image && (
+              <img
+                src={student.image}
+                alt={student.name}
+                className="student-photo"
+              />
+            )}
 
-            <p className="label">
-              Student ID
-            </p>
+            <h2>{student.name}</h2>
 
             <p className="student-id">
-              {nfcData.student_id}
+              {student.student_id}
+            </p>
+
+            <p>
+              <strong>Course:</strong>{" "}
+              {student.course}
+            </p>
+
+            <p>
+              <strong>Year:</strong>{" "}
+              {student.year}
             </p>
 
             <p>
@@ -122,6 +165,9 @@ function App() {
               ).toLocaleString()}
             </p>
 
+            <div className="attendance-status">
+              ✓ Attendance Recorded
+            </div>
           </>
         ) : (
           <p>
@@ -135,4 +181,4 @@ function App() {
   );
 }
 
-export default App; 
+export default App;

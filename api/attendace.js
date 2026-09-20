@@ -14,40 +14,62 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { uid, data } = req.body;
+    const { uid } = req.body;
 
-    if (!uid || !data) {
+    if (!uid) {
       return res.status(400).json({
         success: false,
-        message: "UID and student ID are required",
+        message: "NFC UID is required",
       });
     }
 
+    // Find the student using the NFC UID
+    const {
+      data: student,
+      error: studentError,
+    } = await supabase
+      .from("students")
+      .select("*")
+      .eq("uid", uid)
+      .single();
+
+    if (studentError || !student) {
+      return res.status(404).json({
+        success: false,
+        message: "Student not found for this NFC card",
+      });
+    }
+
+    // Save attendance
     const {
       data: attendance,
-      error,
+      error: attendanceError,
     } = await supabase
       .from("attendace")
       .insert([
         {
-          uid: uid,
-          student_id: data,
+          uid: student.uid,
+          student_id: student.student_id,
         },
       ])
       .select()
       .single();
 
-    if (error) {
-      console.error("Supabase error:", error);
+    if (attendanceError) {
+      console.error(
+        "Attendance error:",
+        attendanceError
+      );
 
       return res.status(500).json({
         success: false,
-        message: error.message,
+        message: attendanceError.message,
       });
     }
 
     return res.status(200).json({
       success: true,
+      student: student,
       attendance: attendance,
     });
   } catch (error) {
