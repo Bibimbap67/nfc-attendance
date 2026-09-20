@@ -1,0 +1,31 @@
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f2f2f2;
+}
+
+.app {
+  max-width: 700px;
+  margin: 80px auto;
+  padding: 0 20px;
+  text-align: center;
+}
+
+.card {
+  background: white;
+  padding: 40px;
+  margin-top: 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.label {
+  font-size: 18px;
+  margin-bottom: 5px;
+}
+
+.student-id {
+  font-size: 40px;
+  font-weight: bold;
+  margin-top: 5px;
+}
