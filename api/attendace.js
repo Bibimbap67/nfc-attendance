@@ -6,14 +6,14 @@ const supabase = createClient(
 );
 
 export default async function handler(req, res) {
-  try {
-    if (req.method !== "POST") {
-      return res.status(405).json({
-        success: false,
-        message: "Method not allowed",
-      });
-    }
+  if (req.method !== "POST") {
+    return res.status(405).json({
+      success: false,
+      message: "Method not allowed",
+    });
+  }
 
+  try {
     const { uid, data } = req.body;
 
     if (!uid || !data) {
@@ -23,20 +23,19 @@ export default async function handler(req, res) {
       });
     }
 
-    const { data: attendance, error } =
-      await supabase
-        .from("attendance")
-        .insert([
-          {
-            uid: uid,
-            student_id: data,
-          },
-        ])
-        .select()
-        .single();
+    const { data: attendance, error } = await supabase
+      .from("attendance")
+      .insert([
+        {
+          uid,
+          student_id: data,
+        },
+      ])
+      .select()
+      .single();
 
     if (error) {
-      console.error("Supabase error:", error);
+      console.error(error);
 
       return res.status(500).json({
         success: false,
@@ -46,10 +45,10 @@ export default async function handler(req, res) {
 
     return res.status(200).json({
       success: true,
-      attendance: attendance,
+      attendance,
     });
   } catch (error) {
-    console.error("API error:", error);
+    console.error(error);
 
     return res.status(500).json({
       success: false,
