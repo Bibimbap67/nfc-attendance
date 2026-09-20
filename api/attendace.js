@@ -2,11 +2,10 @@ import { createClient } from "@supabase/supabase-js";
 
 const supabase = createClient(
   process.env.SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_ROLE_KEY
+  process.env.SUPABASE_SERVICE_ROLE_KEY,
 );
 
 export default async function handler(req, res) {
-
   // =========================
   // DELETE ATTENDANCE
   // =========================
@@ -22,10 +21,7 @@ export default async function handler(req, res) {
         });
       }
 
-      const {
-        data,
-        error,
-      } = await supabase
+      const { data, error } = await supabase
         .from("attendace")
         .delete()
         .eq("id", id)
@@ -33,10 +29,7 @@ export default async function handler(req, res) {
         .single();
 
       if (error) {
-        console.error(
-          "Delete error:",
-          error
-        );
+        console.error("Delete error:", error);
 
         return res.status(500).json({
           success: false,
@@ -49,12 +42,8 @@ export default async function handler(req, res) {
         message: "Attendance deleted successfully",
         attendance: data,
       });
-
     } catch (error) {
-      console.error(
-        "Server error:",
-        error
-      );
+      console.error("Server error:", error);
 
       return res.status(500).json({
         success: false,
@@ -62,7 +51,6 @@ export default async function handler(req, res) {
       });
     }
   }
-
 
   // =========================
   // CREATE ATTENDANCE
@@ -80,28 +68,27 @@ export default async function handler(req, res) {
       }
 
       // Find student using NFC UID
-      const {
-        data: student,
-        error: studentError,
-      } = await supabase
+      const { data: student, error: studentError } = await supabase
         .from("students")
         .select("*")
         .eq("uid", uid)
         .single();
 
+      console.log("Student search:", {
+        uid,
+        student,
+        studentError,
+      });
+
       if (studentError || !student) {
         return res.status(404).json({
           success: false,
-          message:
-            "Student not found for this NFC card",
+          message: "Student not found for this NFC card",
         });
       }
 
       // Save attendance
-      const {
-        data: attendance,
-        error: attendanceError,
-      } = await supabase
+      const { data: attendance, error: attendanceError } = await supabase
         .from("attendace")
         .insert([
           {
@@ -113,10 +100,7 @@ export default async function handler(req, res) {
         .single();
 
       if (attendanceError) {
-        console.error(
-          "Attendance error:",
-          attendanceError
-        );
+        console.error("Attendance error:", attendanceError);
 
         return res.status(500).json({
           success: false,
@@ -129,12 +113,8 @@ export default async function handler(req, res) {
         student: student,
         attendance: attendance,
       });
-
     } catch (error) {
-      console.error(
-        "Server error:",
-        error
-      );
+      console.error("Server error:", error);
 
       return res.status(500).json({
         success: false,
@@ -142,7 +122,6 @@ export default async function handler(req, res) {
       });
     }
   }
-
 
   // =========================
   // OTHER METHODS
