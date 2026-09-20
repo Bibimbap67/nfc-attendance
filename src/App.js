@@ -16,7 +16,7 @@ function App() {
   useEffect(() => {
     const loadLatestAttendance = async () => {
       const { data, error } = await supabase
-        .from("attendance")
+        .from("attendace")
         .select("*")
         .order("scanned_at", {
           ascending: false,
@@ -42,7 +42,7 @@ function App() {
     loadLatestAttendance();
 
     const channel = supabase
-      .channel("attendance-changes")
+      .channel("attendace-changes")
 
       .on(
         "postgres_changes",
