@@ -34,42 +34,66 @@ function Scanner() {
           setStatus("NFC detected!");
 
           try {
-            const response = await fetch("/api/attendance", {
-              method: "POST",
+            const response = await fetch(
+              "/api/attendance",
+              {
+                method: "POST",
 
-              headers: {
-                "Content-Type": "application/json",
-              },
+                headers: {
+                  "Content-Type": "application/json",
+                },
 
-              body: JSON.stringify({
-                uid: serialNumber,
-                data: nfcText,
-              }),
-            });
+                body: JSON.stringify({
+                  uid: serialNumber,
+                  data: nfcText,
+                }),
+              }
+            );
 
-            const result = await response.json();
+            // Read the response as text first
+            const responseText =
+              await response.text();
+
+            console.log(
+              "Vercel response:",
+              responseText
+            );
+
+            // Then convert it to JSON
+            let result;
+
+            try {
+              result = JSON.parse(responseText);
+            } catch (error) {
+              throw new Error(
+                "Server returned invalid JSON: " +
+                  responseText
+              );
+            }
 
             if (!response.ok) {
               throw new Error(
-                result.message || "Failed to send attendance"
+                result.message ||
+                  "Failed to send attendance"
               );
             }
 
             console.log(
-              "Attendance sent:",
+              "Attendance saved:",
               result
             );
 
-            setStatus("Attendance sent successfully!");
+            setStatus(
+              "Attendance sent successfully!"
+            );
           } catch (error) {
             console.error(error);
 
-            setStatus("Failed to send attendance");
-
-            alert(
-              "Failed to send attendance: " +
-                error.message
+            setStatus(
+              "Failed to send attendance"
             );
+
+            alert(error.message);
           }
         }
       );
@@ -86,12 +110,21 @@ function Scanner() {
   };
 
   return (
-    <div style={styles.container}>
+    <div
+      style={{
+        padding: "30px",
+        textAlign: "center",
+        fontFamily: "Arial, sans-serif",
+      }}
+    >
       <h1>📱 NFC Reader</h1>
 
       <button
-        style={styles.button}
         onClick={scanNFC}
+        style={{
+          padding: "12px 24px",
+          fontSize: "18px",
+        }}
       >
         Scan NFC
       </button>
@@ -102,30 +135,16 @@ function Scanner() {
 
       <h2>Scanned Student ID</h2>
 
-      <p style={styles.data}>
+      <p
+        style={{
+          fontSize: "30px",
+          fontWeight: "bold",
+        }}
+      >
         {data || "Nothing scanned yet"}
       </p>
     </div>
   );
 }
-
-const styles = {
-  container: {
-    padding: "30px",
-    textAlign: "center",
-    fontFamily: "Arial, sans-serif",
-  },
-
-  button: {
-    padding: "12px 24px",
-    fontSize: "18px",
-    cursor: "pointer",
-  },
-
-  data: {
-    fontSize: "30px",
-    fontWeight: "bold",
-  },
-};
 
 export default Scanner;

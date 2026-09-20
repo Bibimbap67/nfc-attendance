@@ -6,50 +6,54 @@ const supabase = createClient(
 );
 
 export default async function handler(req, res) {
-  if (req.method !== "POST") {
-    return res.status(405).json({
-      message: "Method not allowed",
-    });
-  }
-
   try {
+    if (req.method !== "POST") {
+      return res.status(405).json({
+        success: false,
+        message: "Method not allowed",
+      });
+    }
+
     const { uid, data } = req.body;
 
     if (!uid || !data) {
       return res.status(400).json({
+        success: false,
         message: "UID and student ID are required",
       });
     }
 
-    const { data: attendance, error } = await supabase
-      .from("attendance")
-      .insert([
-        {
-          uid: uid,
-          student_id: data,
-        },
-      ])
-      .select()
-      .single();
+    const { data: attendance, error } =
+      await supabase
+        .from("attendance")
+        .insert([
+          {
+            uid: uid,
+            student_id: data,
+          },
+        ])
+        .select()
+        .single();
 
     if (error) {
-      console.error(error);
+      console.error("Supabase error:", error);
 
       return res.status(500).json({
-        message: "Failed to save attendance",
-        error: error.message,
+        success: false,
+        message: error.message,
       });
     }
 
     return res.status(200).json({
       success: true,
-      attendance,
+      attendance: attendance,
     });
   } catch (error) {
-    console.error(error);
+    console.error("API error:", error);
 
     return res.status(500).json({
-      message: "Server error",
+      success: false,
+      message: error.message,
     });
   }
 }
