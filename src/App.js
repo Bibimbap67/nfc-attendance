@@ -49,7 +49,7 @@ function App() {
         {
           event: "INSERT",
           schema: "public",
-          table: "attendance",
+          table: "attendace",
         },
 
         (payload) => {

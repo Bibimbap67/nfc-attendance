@@ -24,7 +24,7 @@ export default async function handler(req, res) {
     }
 
     const { data: attendance, error } = await supabase
-      .from("attendance")
+      .from("attendace")
       .insert([
         {
           uid,
@@ -45,7 +45,7 @@ export default async function handler(req, res) {
 
     return res.status(200).json({
       success: true,
-      attendance,
+      attendace,
     });
   } catch (error) {
     console.error(error);

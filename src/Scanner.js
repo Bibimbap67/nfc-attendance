@@ -35,7 +35,7 @@ function Scanner() {
 
           try {
             const response = await fetch(
-              "/api/attendance",
+              "/api/attendace",
               {
                 method: "POST",
 
